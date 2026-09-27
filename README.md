@@ -1,5 +1,10 @@
 # ERflow
 
+> ### 🔴 Live demo: **[erflow-qcbv7gnpmrgbbvxcqd2gqw.streamlit.app](https://erflow-qcbv7gnpmrgbbvxcqd2gqw.streamlit.app/)**
+> No install needed. If the page shows "Zzzz… this app has gone to sleep", click **Yes, get this app back up** and give it about a minute.
+>
+> 📊 **Dataset:** [`erflow/data/erflow_ed_dataset.parquet`](erflow/data/erflow_ed_dataset.parquet) · schema and provenance in **[DATA.md](DATA.md)**
+
 **Emergency Department Decision Support System & Queue Scheduler**
 
 **Team:** Argo (Karan Aditya, Jai A Mishra)  
@@ -26,7 +31,7 @@
 
 ## 2. Model Training
 
-- **Dataset**: 6,230 synthetic ED patients generated with a fixed seed (`erflow/scripts/generate_data.py`, prototyped in `ERflow_Modelling.ipynb`). The target `critical_outcome` is ICU admission or 30-day mortality (536 positives, 8.6%).
+- **Dataset**: 6,230 synthetic ED patients generated with a fixed seed (`erflow/scripts/generate_data.py`, prototyped in `ERflow_Modelling.ipynb`), exported to [`erflow/data/erflow_ed_dataset.parquet`](erflow/data/erflow_ed_dataset.parquet) and documented in [DATA.md](DATA.md). The target `critical_outcome` is ICU admission or 30-day mortality (536 positives, 8.6%).
 - **Models**: one XGBoost model per age cohort, trained with a custom asymmetric logistic objective. Settings: 150 boosting rounds, `max_depth = 4`, `learning_rate = 0.01`, `tree_method = 'hist'`, stratified 80/20 train/test split, decision threshold `t = 0.504`.
 - **Held-out test performance** (from `erflow/models/models_metadata.json`):
 
@@ -65,6 +70,7 @@ erflow/
 │   ├── pediatric_xgb.json       # Pediatric risk XGBoost model (<18, alpha=28.0)
 │   └── models_metadata.json     # Features, thresholds and test metrics
 ├── data/
+│   ├── erflow_ed_dataset.parquet # Training dataset (6,230 rows), see DATA.md
 │   └── esi_reference_tables.json # ESI v5 vital thresholds & age reference ranges
 ├── rule_engine/
 │   ├── decision_a.py            # Immediate life threat check (ESI 1)
@@ -90,6 +96,7 @@ erflow/
 ├── scripts/
 │   ├── generate_data.py         # Synthetic ED dataset generator (6,230 cases)
 │   ├── train_models.py          # Asymmetric loss model trainer & exporter
+│   ├── export_parquet.py        # Writes the training dataset to Parquet
 │   ├── generate_documentation_pdf.py  # Builds ERflow_Technical_Documentation.pdf
 │   └── generate_mismatch_pdf.py       # Builds ERflow_ESI_Disagreement_and_Conflict_Resolution.pdf
 └── tests/
