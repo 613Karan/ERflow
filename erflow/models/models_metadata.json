@@ -1,0 +1,67 @@
+{
+  "geriatric": {
+    "model_path": "erflow/models/geriatric_xgb.json",
+    "features": [
+      "heart_rate",
+      "resp_rate",
+      "spo2",
+      "sbp",
+      "temp_c",
+      "cfs_frailty_score",
+      "has_prior_history",
+      "comorbidity_count"
+    ],
+    "alpha": 23.0,
+    "threshold": 0.504,
+    "roc_auc": 0.7277788173652694,
+    "tp": 28,
+    "tn": 165,
+    "fp": 169,
+    "fn": 4,
+    "sensitivity": 0.875,
+    "specificity": 0.4940119760479042
+  },
+  "adult": {
+    "model_path": "erflow/models/adult_xgb.json",
+    "features": [
+      "heart_rate",
+      "resp_rate",
+      "spo2",
+      "sbp",
+      "temp_c",
+      "has_prior_history",
+      "comorbidity_count"
+    ],
+    "alpha": 18.0,
+    "threshold": 0.504,
+    "roc_auc": 0.8047581073896863,
+    "tp": 53,
+    "tn": 335,
+    "fp": 292,
+    "fn": 7,
+    "sensitivity": 0.8833333333333333,
+    "specificity": 0.5342902711323764
+  },
+  "pediatric": {
+    "model_path": "erflow/models/pediatric_xgb.json",
+    "features": [
+      "age",
+      "heart_rate",
+      "resp_rate",
+      "spo2",
+      "sbp",
+      "temp_c",
+      "has_prior_history",
+      "comorbidity_count"
+    ],
+    "alpha": 28.0,
+    "threshold": 0.504,
+    "roc_auc": 0.694873595505618,
+    "tp": 12,
+    "tn": 93,
+    "fp": 85,
+    "fn": 4,
+    "sensitivity": 0.75,
+    "specificity": 0.5224719101123596
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "version": "ESI v5 (Emergency Severity Index)",
+  "age_cohorts": {
+    "pediatric_infant": {
+      "name": "Infant (< 1 yr)",
+      "age_min": 0,
+      "age_max": 1,
+      "vital_thresholds": {
+        "heart_rate_max": 160,
+        "resp_rate_max": 45,
+        "spo2_min": 92.0,
+        "sbp_min": 65
+      },
+      "normal_ranges": {
+        "heart_rate": [100, 160],
+        "resp_rate": [30, 45],
+        "spo2": [95, 100],
+        "sbp": [70, 90],
+        "temp_c": [36.5, 37.5]
+      }
+    },
+    "pediatric_toddler_child": {
+      "name": "Toddler / Young Child (1-4 yrs)",
+      "age_min": 1,
+      "age_max": 4,
+      "vital_thresholds": {
+        "heart_rate_max": 140,
+        "resp_rate_max": 35,
+        "spo2_min": 92.0,
+        "sbp_min": 75
+      },
+      "normal_ranges": {
+        "heart_rate": [90, 140],
+        "resp_rate": [22, 34],
+        "spo2": [95, 100],
+        "sbp": [80, 100],
+        "temp_c": [36.5, 37.5]
+      }
+    },
+    "pediatric_school_adolescent": {
+      "name": "School Age / Adolescent (5-17 yrs)",
+      "age_min": 5,
+      "age_max": 17,
+      "vital_thresholds": {
+        "heart_rate_max": 110,
+        "resp_rate_max": 24,
+        "spo2_min": 92.0,
+        "sbp_min": 90
+      },
+      "normal_ranges": {
+        "heart_rate": [60, 100],
+        "resp_rate": [14, 20],
+        "spo2": [95, 100],
+        "sbp": [90, 120],
+        "temp_c": [36.5, 37.5]
+      }
+    },
+    "adult": {
+      "name": "Adult (18-64 yrs)",
+      "age_min": 18,
+      "age_max": 64,
+      "vital_thresholds": {
+        "heart_rate_max": 100,
+        "resp_rate_max": 20,
+        "spo2_min": 92.0,
+        "sbp_min": 90,
+        "sbp_max": 180
+      },
+      "normal_ranges": {
+        "heart_rate": [60, 100],
+        "resp_rate": [12, 20],
+        "spo2": [95, 100],
+        "sbp": [90, 130],
+        "temp_c": [36.1, 37.2]
+      }
+    },
+    "geriatric": {
+      "name": "Geriatric (65+ yrs)",
+      "age_min": 65,
+      "age_max": 120,
+      "vital_thresholds": {
+        "heart_rate_max": 100,
+        "frailty_heart_rate_max": 90,
+        "resp_rate_max": 20,
+        "spo2_min": 92.0,
+        "sbp_min": 100,
+        "sbp_max": 190
+      },
+      "normal_ranges": {
+        "heart_rate": [60, 90],
+        "resp_rate": [12, 18],
+        "spo2": [94, 100],
+        "sbp": [100, 140],
+        "temp_c": [35.8, 37.0]
+      }
+    }
+  },
+  "decision_points": {
+    "A": {
+      "title": "Immediate Life-Saving Intervention Required",
+      "esi_level": 1,
+      "triggers": [
+        "requires_lifesaving_intervention",
+        "intubation",
+        "cardiopulmonary_arrest",
+        "unresponsive_apneic_pulseless",
+        "severe_respiratory_distress_agonal",
+        "acute_mental_status_unresponsive"
+      ]
+    },
+    "B": {
+      "title": "High-Risk Situation / Confused, Lethargic, Disoriented / Severe Pain or Distress",
+      "esi_level": 2,
+      "triggers": [
+        "high_risk_situation",
+        "altered_mental_status",
+        "severe_pain_distress",
+        "acute_chest_pain_ischemic",
+        "acute_stroke_symptoms",
+        "anaphylaxis_early",
+        "suicidal_ideation_acute",
+        "gcs_less_than_14"
+      ]
+    },
+    "C": {
+      "title": "Resource Estimation",
+      "description": "Determines ESI level 3, 4, or 5 based on expected healthcare resources required.",
+      "mapping": {
+        "many_resources_2_plus": 3,
+        "one_resource_1": 4,
+        "zero_resources_0": 5
+      }
+    },
+    "D": {
+      "title": "Danger Zone Vital Signs Assessment",
+      "esi_level": 2,
+      "description": "Automatic escalation of ESI 3, 4, 5 patients to ESI 2 if age-specific danger zone vital sign limits are breached."
+    },
+    "GeriatricFrailtyGuard": {
+      "title": "Geriatric Frailty Vulnerability Check",
+      "esi_level": 2,
+      "description": "Patients >= 65 with Clinical Frailty Scale (CFS) >= 5 and HR > 90 bpm are escalated to ESI 2 to protect diminished physiological reserve."
+    }
+  },
+  "model_thresholds": {
+    "geriatric_alpha": 23.0,
+    "adult_alpha": 18.0,
+    "pediatric_alpha": 28.0,
+    "cost_sensitive_threshold": 0.504,
+    "confidence_mandatory_review_cutoff": 20.0
+  },
+  "scheduler_weights": {
+    "W_floor": 1000.0,
+    "W_risk": 100.0,
+    "W_time_baseline": 15.0,
+    "tau": 30.0
+  }
+}
+
