@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERflow</title>
+<meta name="description" content="ERflow - Emergency Department decision support and queue scheduler. Team Argo, IIT Guwahati.">
+<style>
+  :root {
+    --bg: #fff8f3;
+    --surface: #fcf2e8;
+    --surface-high: #f6e9dc;
+    --border: #ebe1d7;
+    --text: #1f1b15;
+    --muted: #6d6257;
+    --accent: #3e7350;
+    --accent-ink: #1e5031;
+    --link: #9f3c16;
+    --red: #ba1a1a;
+    --amber: #88520c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16130f;
+      --surface: #1f1a15;
+      --surface-high: #2a231c;
+      --border: #3a3128;
+      --text: #f2e9df;
+      --muted: #a89b8d;
+      --accent: #7fb08e;
+      --accent-ink: #a9d2b5;
+      --link: #f0a179;
+      --red: #ffb4ab;
+      --amber: #e8b478;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16130f;
+    --surface: #1f1a15;
+    --surface-high: #2a231c;
+    --border: #3a3128;
+    --text: #f2e9df;
+    --muted: #a89b8d;
+    --accent: #7fb08e;
+    --accent-ink: #a9d2b5;
+    --link: #f0a179;
+    --red: #ffb4ab;
+    --amber: #e8b478;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px 72px; }
+
+  header { padding: 64px 0 40px; border-bottom: 1px solid var(--border); }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent-ink); margin: 0 0 12px;
+  }
+  h1 { font-size: clamp(2.2rem, 7vw, 3.2rem); line-height: 1.1; margin: 0 0 16px; letter-spacing: -.02em; }
+  .tagline { font-size: clamp(1.05rem, 2.6vw, 1.2rem); color: var(--muted); margin: 0 0 8px; max-width: 62ch; }
+  .byline { font-size: .9rem; color: var(--muted); margin: 24px 0 0; }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 32px 0 0; }
+  .btn {
+    display: inline-block; padding: 12px 22px; border-radius: 8px; font-weight: 600;
+    text-decoration: none; font-size: .95rem; border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .btn-primary, :root:not([data-theme="light"]) .btn-primary { color: #10231a; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .btn-primary { color: #fff; } }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { border-color: var(--border); color: var(--text); background: var(--surface); }
+  .btn-ghost:hover { background: var(--surface-high); }
+
+  h2 { font-size: 1.35rem; margin: 52px 0 6px; letter-spacing: -.01em; }
+  h2 + .sub { color: var(--muted); font-size: .94rem; margin: 0 0 20px; }
+  p { margin: 0 0 16px; }
+
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+  .card h3 { margin: 0 0 8px; font-size: 1.02rem; }
+  .card p { margin: 0; font-size: .92rem; color: var(--muted); }
+  .stage-tag {
+    display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px;
+  }
+
+  .formula {
+    background: var(--surface-high); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; margin: 0 0 16px; overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .86rem;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; margin: 0 0 12px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; }
+  .table-scroll { overflow-x: auto; }
+
+  ul.plain { margin: 0 0 16px; padding-left: 20px; }
+  ul.plain li { margin-bottom: 8px; }
+
+  .note {
+    border-left: 3px solid var(--amber); background: var(--surface);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 0 0 16px; font-size: .92rem;
+  }
+  .note strong { color: var(--amber); }
+
+  a { color: var(--link); }
+  code {
+    background: var(--surface-high); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 5px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .86em;
+  }
+  pre {
+    background: var(--surface-high); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; overflow-x: auto; font-size: .86rem; margin: 0 0 16px;
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  footer {
+    margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border);
+    font-size: .85rem; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Clinical Decision Support</p>
+    <h1>ERflow</h1>
+    <p class="tagline">
+      A two-stage decision support prototype for Emergency Department patient prioritization.
+      It assesses each incoming patient, explains the result, and keeps the waiting room
+      ordered by clinical priority — without replacing clinical judgment.
+    </p>
+    <div class="cta-row">
+      <!-- Replace with your Streamlit Community Cloud URL once deployed. -->
+      <a class="btn btn-primary" href="https://erflow.streamlit.app">Launch the live dashboard</a>
+      <a class="btn btn-ghost" href="https://github.com/613Karan/ERflow">View source on GitHub</a>
+    </div>
+    <p class="byline">Team Argo — Karan Aditya, Jai A Mishra · Indian Institute of Technology Guwahati</p>
+  </header>
+
+  <h2>What it does</h2>
+  <p class="sub">Two stages, each addressing a distinct failure mode in ED triage.</p>
+  <div class="cards">
+    <div class="card">
+      <span class="stage-tag">Stage 1</span>
+      <h3>Patient intake &amp; assessment</h3>
+      <p>
+        Returns the final ESI level, risk probability, a tree-level confidence score, the
+        safety rules that fired, SHAP feature contributions and a grounded clinical narrative —
+        with a mandatory review gate for low-confidence cases.
+      </p>
+    </div>
+    <div class="card">
+      <span class="stage-tag">Stage 2</span>
+      <h3>Queue scheduler</h3>
+      <p>
+        A continuously re-scored priority queue. Scores rise with waiting time, so a lower-acuity
+        patient is never starved indefinitely, and every clinician override is written to an audit log.
+      </p>
+    </div>
+  </div>
+
+  <h2>Design principles</h2>
+  <p class="sub">Why the system is built the way it is.</p>
+
+  <p><strong>Asymmetric risk optimization.</strong> Missing a critical case is far worse than
+  over-prioritizing a minor one. Three age-specific XGBoost models are trained with an asymmetric
+  loss that weights false negatives heavily (&alpha; = 23.0 geriatric, 18.0 adult, 28.0 pediatric;
+  &beta; = 1.0).</p>
+
+  <p><strong>Deterministic safety floors.</strong> Model output is bounded by ESI v5 rule checks.
+  Priority can only be escalated automatically, never downgraded without clinician action:</p>
+  <div class="formula">Final_ESI = min(ML_ESI_Recommendation, ABCDE_ESI_Floor)</div>
+
+  <p><strong>Time-aware prioritization.</strong> Queue position is recomputed continuously:</p>
+  <div class="formula">Priority(t) = 1000 · (6 − ESI_final) + 100 · P_risk + 15 · ln(1 + t_wait / 30)</div>
+
+  <p><strong>Zero-history resilience.</strong> Built for realistic conditions, where roughly half of
+  arriving patients have no verified medical history.</p>
+
+  <p><strong>Grounded explanations.</strong> The narrative engine may only restate facts the models and
+  rules already produced. A validator checks every claim — SHAP direction, numerical fidelity, rule
+  citation and the acuity floor — and flags the case for human review if any check fails.</p>
+
+  <h2>Model performance</h2>
+  <p class="sub">Held-out test set, 6,230 synthetic ED patients (8.6% critical outcomes).</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Cohort</th><th>Rows (train / test)</th><th>ROC-AUC</th><th>Sensitivity</th><th>Specificity</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Geriatric (65+)</td><td class="num">1,829 (1,463 / 366)</td><td class="num">0.728</td><td class="num">87.5%</td><td class="num">49.4%</td></tr>
+        <tr><td>Adult (18–64)</td><td class="num">3,431 (2,744 / 687)</td><td class="num">0.805</td><td class="num">88.3%</td><td class="num">53.4%</td></tr>
+        <tr><td>Pediatric (&lt;18)</td><td class="num">970 (776 / 194)</td><td class="num">0.695</td><td class="num">75.0%</td><td class="num">52.2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:.88rem;color:var(--muted)">
+    Sensitivity is deliberately favoured over specificity: the asymmetric loss trades false positives
+    for a lower miss rate on critical cases. Decision threshold t = 0.504.
+  </p>
+
+  <h2>Run it locally</h2>
+  <p class="sub">The hosted dashboard is the quickest look; a local clone adds the local language model.</p>
+<pre><code>git clone https://github.com/613Karan/ERflow.git
+cd ERflow
+pip install -r requirements.txt
+
+python main.py --ui         # Streamlit dashboard
+python main.py --api        # FastAPI backend, docs at /docs
+python main.py --simulate   # terminal batch assessment
+python main.py --test       # test suite</code></pre>
+
+  <div class="note">
+    <strong>On the clinical narrative.</strong> Locally, Stage 1 prose can be written by a Gemma 4
+    model served by Ollama, entirely on your machine. A hosted deployment has no GPU, so it uses the
+    built-in deterministic narrative engine instead. The dashboard always labels which engine produced
+    the text, and grounding validation runs identically either way — the language model only ever
+    explains a result the models and rules already decided.
+  </div>
+
+  <h2>Clinical governance</h2>
+  <p>
+    ERflow provides risk estimates, safety floors and grounded explanations to support clinicians. It
+    keeps predictive risk insights separate from diagnosis, and clinicians retain final authority to
+    override any acuity assignment. Every override is recorded in the Nurse Override Audit Log.
+  </p>
+  <div class="note">
+    <strong>Prototype notice.</strong> ERflow is a research prototype trained on synthetic data. It is
+    not a medical device, is not validated for clinical use, and must not inform real patient care.
+  </div>
+
+  <footer>
+    Team Argo — Karan Aditya, Jai A Mishra · IIT Guwahati ·
+    <a href="https://github.com/613Karan/ERflow">github.com/613Karan/ERflow</a>
+  </footer>
+
+</div>
+</body>
+</html>

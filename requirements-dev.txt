@@ -1,0 +1,11 @@
+# Development and documentation extras. Not needed to run the dashboard, so they
+# are kept out of requirements.txt to keep hosted builds small and fast.
+# Install with:  pip install -r requirements.txt -r requirements-dev.txt
+
+-r requirements.txt
+
+# Test suite (erflow/tests)
+pytest==9.1.1
+
+# PDF generation (erflow/scripts/generate_documentation_pdf.py, generate_mismatch_pdf.py)
+reportlab==5.0.1

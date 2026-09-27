@@ -103,6 +103,18 @@ erflow/
 
 ## 5. Quick Start
 
+### Install Dependencies
+The `.venv` committed in earlier revisions was built on macOS and is not portable. Create your own:
+
+```bash
+python -m venv .venv
+# Windows:        .venv\Scripts\activate
+# macOS / Linux:  source .venv/bin/activate
+
+pip install -r requirements.txt                          # to run the app
+pip install -r requirements.txt -r requirements-dev.txt   # to also run tests / build PDFs
+```
+
 ### Run the Streamlit Dashboard
 ```bash
 python main.py --ui
@@ -126,5 +138,62 @@ python -m pytest erflow/tests -v
 
 ---
 
-## 6. Clinical Governance
+## 6. Deployment
+
+The dashboard calls the assessment pipeline in-process and never contacts the FastAPI backend, so it
+deploys as a **single service**. Two things ship alongside the code to make that work:
+`requirements.txt` (pinned versions) and `runtime.txt` (Python 3.12, chosen for the widest
+`xgboost` / `shap` wheel coverage).
+
+### Streamlit Community Cloud (recommended)
+
+1. Sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub.
+2. **New app** → pick this repository, branch `main`.
+3. Set **Main file path** to `erflow/ui/app.py`.
+4. Deploy. The first build takes a few minutes while `xgboost` and `shap` install.
+
+The loaded app holds roughly 370 MB resident, comfortably inside the free tier.
+
+### GitHub Pages
+
+GitHub Pages serves static files only and **cannot run this app** — every interaction executes
+XGBoost inference and SHAP server-side. What Pages *can* host is the project landing page in
+`docs/index.html`, which describes the system and links to the live dashboard:
+
+1. **Settings → Pages → Source:** Deploy from a branch.
+2. **Branch:** `main`, **folder:** `/docs`. Save.
+3. The page publishes at `https://613Karan.github.io/ERflow/`.
+
+Edit the "Launch the live dashboard" link in `docs/index.html` to point at your Streamlit URL once
+step 4 above completes.
+
+### Other hosts
+
+Hugging Face Spaces (Streamlit SDK), Render and Railway all work from the same
+`requirements.txt`; start the app with:
+
+```bash
+streamlit run erflow/ui/app.py --server.port $PORT --server.address 0.0.0.0
+```
+
+### The local language model does not deploy
+
+`gemma4:12b` is 8.3 GB resident and wants a GPU, so no free tier can host it. A deployed instance
+uses the built-in deterministic narrative engine: instant, fully grounded, and labelled as such in
+the Stage 1 UI. Gemma remains a local-only enhancement. To force the deterministic path locally —
+useful for a fast demo — point `OLLAMA_HOST` at a closed port:
+
+```bash
+OLLAMA_HOST=http://127.0.0.1:1 python main.py --ui
+```
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `OLLAMA_HOST` | `http://localhost:11434` | Ollama server address |
+| `OLLAMA_MODEL` | `gemma4:12b` | Model tag to request |
+| `OLLAMA_TIMEOUT` | `90` | Seconds before falling back |
+
+---
+
+## 7. Clinical Governance
 ERflow provides risk estimates, safety floors and grounded explanations to support clinicians. It keeps predictive risk insights separate from diagnosis, and clinicians keep final authority to override any acuity assignment. Every override is recorded in the Nurse Override Audit Log.

@@ -1,0 +1,21 @@
+# ERflow runtime dependencies (pinned to the versions the project is verified on).
+# Install with:  pip install -r requirements.txt
+
+# Dashboard
+streamlit==1.62.0
+altair==6.2.2
+
+# Models, explainability and data
+xgboost==3.4.1
+shap==0.52.0
+scikit-learn==1.7.2
+pandas==2.3.2
+numpy==2.2.6
+
+# REST API (erflow/api/main.py)
+fastapi==0.128.0
+uvicorn==0.52.4
+pydantic==2.12.5
+
+# Ollama HTTP client (falls back to the deterministic engine when unavailable)
+requests==2.32.5

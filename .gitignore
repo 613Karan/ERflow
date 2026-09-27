@@ -1,0 +1,24 @@
+# Virtual environments
+# The .venv in this tree was built on macOS and is not portable; recreate it locally.
+.venv/
+venv/
+env/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Streamlit local secrets (never commit credentials)
+.streamlit/secrets.toml
+
+# Editors
+.vscode/
+.idea/

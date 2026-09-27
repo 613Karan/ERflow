@@ -4,12 +4,21 @@ Team: Argo (Karan Aditya, Jai A Mishra) - IIT Guwahati
 """
 
 import os
+import sys
 import json
 import html
 import pandas as pd
 import numpy as np
 import altair as alt
 import streamlit as st
+
+# Streamlit puts this file's directory on sys.path, not the repository root, so
+# 'import erflow' only resolves when the process happens to start from the root.
+# Hosted runners (Streamlit Community Cloud, Spaces, Render, Docker) vary here,
+# so make the package importable regardless of the working directory.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 from erflow.agent.orchestrator import AssessmentOrchestrator
 from erflow.scheduler.max_heap import DynamicMaxHeapQueue
